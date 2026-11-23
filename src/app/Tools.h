@@ -61,6 +61,7 @@ constexpr const char* kToolE57 = "e57";
 constexpr const char* kToolLidar = "lidar";
 constexpr const char* kToolPartition = "partition";
 constexpr const char* kToolMarker = "marker";
+constexpr const char* kToolPrepare = "prepare";
 
 }  // namespace app
 
@@ -84,6 +85,7 @@ int spirula_dense_main(int argc, char** argv);
 #endif
 #ifdef SS_TOOL_GUI
 int spirula_gui_main(int argc, char** argv);
+int spirula_prepare_main(int argc, char** argv);
 #endif
 #ifdef SS_TOOL_E57
 int spirula_e57_main(int argc, char** argv);

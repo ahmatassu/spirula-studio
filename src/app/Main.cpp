@@ -76,6 +76,7 @@ const std::vector<Tool>& tools() {
     static const std::vector<Tool> kTools = {
 #ifdef SS_TOOL_GUI
         {app::kToolGui, &cmsg::tool_gui, spirula_gui_main},
+        {app::kToolPrepare, &cmsg::tool_prepare, spirula_prepare_main},
 #endif
 #ifdef SS_TOOL_SFM
         {app::kToolSfm, &cmsg::tool_sfm, spirula_sfm_main},
