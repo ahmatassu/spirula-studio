@@ -15,6 +15,7 @@
 #include "app/gui/DatasetPrep.h"
 #include "app/gui/DatasetPreset.h"
 #include "app/gui/DatasetRecord.h"
+#include "app/gui/ModelCache.h"
 #include "app/gui/PrepProgress.h"
 #include "app/gui/SfmRunner.h"
 #include "app/gui/SourceList.h"
@@ -371,6 +372,27 @@ int spirula_prepare_main(int argc, char** argv) {
     job.prep.resume = !redo;
     job.prep.ffmpeg_exe = ffmpeg;
     job.prep.mask_enable = job.prep.mask_enable && backends().builtin_masking;
+    // GuiApp::fill_masking, from the preset; a model is never downloaded here (consent is the window's)
+    if (job.prep.mask_enable) {
+        const MaskModelFiles m = cached_mask_model(settings.mask_model_id, settings.mask_detector_id);
+        if (m.empty()) {
+            std::printf("Masks skipped: download the %s model once in the window first\n",
+                        settings.mask_model_id.c_str());
+            job.prep.mask_enable = false;
+        } else {
+            job.prep.mask_prompt = m.text ? settings.mask.prompt : "";
+            job.prep.mask_negative_prompt = m.text ? settings.mask.negative_prompt : "";
+            job.prep.mask_feature_prompt = m.text ? settings.mask.feature_prompt : "";
+            job.prep.mask_keep_subject = settings.mask.keep_subject;
+            job.prep.mask_max_image_size = settings.mask.max_image_size;
+            job.prep.mask_dilate_ratio = settings.mask.boundary_ratio();
+            job.prep.mask_threshold = settings.mask.threshold;
+            job.prep.mask_nms = settings.mask.nms;
+            job.prep.mask_model_path = m.model;
+            job.prep.mask_detector_path = m.detector;
+            job.prep.mask_detector_threshold = settings.mask.box_threshold;
+        }
+    }
     job.prep.flip_found_masks = settings.use_found_masks && job.prep.flip_found_masks;
     if (redo) {
         job.request.redo_frames = job.request.redo_masks = job.request.redo_model = true;
